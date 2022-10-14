@@ -38,14 +38,56 @@ class _HomePageState extends State<HomePage> {
         actions: <Widget>[
           IconButton(
             onPressed: () {},
-            icon: Icon(
+            icon: const Icon(
               Icons.light_mode,
               color: Colors.grey,
             ),
           ),
         ],
       ),
-      body: SingleChildScrollView(child: Text('1212')),
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  width: 120,
+                  height: 120,
+                  child: Image.asset('images/86.png'),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('username'),
+                    SizedBox(height: 10),
+                    Text('Wallets'),
+                    SizedBox(height: 10),
+                    Text('Collision'),
+                  ],
+                )
+              ],
+            ),
+            SizedBox(height: 15),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color: Colors.green[200],
+                borderRadius: BorderRadius.circular(12)
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('LEVEL : 10'),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
