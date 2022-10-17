@@ -13,9 +13,9 @@ class GraphChart extends StatefulWidget {
 class GraphChartState extends State<GraphChart> {
   List<_SalesData> data = [
     _SalesData('Jan', 35),
-    _SalesData('Feb', 28),
-    _SalesData('Mar', 34),
-    _SalesData('Apr', 32),
+    // _SalesData('Feb', 28),
+    // _SalesData('Mar', 34),
+    // _SalesData('Apr', 32),
     _SalesData('May', 40)
   ];
   @override
@@ -24,11 +24,12 @@ class GraphChartState extends State<GraphChart> {
         body: Column(children: [
       //Initialize the chart widget
       SizedBox(
+        // width: 100,
         height: 200,
         child: SfCartesianChart(
             primaryXAxis: CategoryAxis(),
             // Chart title
-            title: ChartTitle(text: 'Half yearly sales analysis'),
+            title: ChartTitle(text: 'Skils'),
             // Enable legend
             legend: Legend(isVisible: true),
             // Enable tooltip
