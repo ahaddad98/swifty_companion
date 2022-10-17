@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swiftycompanion/Graphechart.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -45,48 +46,82 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Container(
+      // body: SingleChildScrollView(
+      //   child: GraphChart(),
+      // ),
+      body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 15),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(15),
-                  width: 120,
-                  height: 120,
-                  child: Image.asset('images/86.png'),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('username'),
-                    SizedBox(height: 10),
-                    Text('Wallets'),
-                    SizedBox(height: 10),
-                    Text('Collision'),
-                  ],
-                )
-              ],
-            ),
-            SizedBox(height: 15),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                color: Colors.green[200],
-                borderRadius: BorderRadius.circular(12)
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('LEVEL : 10'),
-                ],
-              ),
-            )
-          ],
-        ),
+        children: [
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //   children: [
+          //     Container(
+          //       padding: const EdgeInsets.all(15),
+          //       width: 120,
+          //       height: 120,
+          //       child: Image.asset('images/86.png'),
+          //     ),
+          //     Column(
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       children: [
+          //         Text('username'),
+          //         SizedBox(height: 10),
+          //         Text('Wallets'),
+          //         SizedBox(height: 10),
+          //         Text('Collision'),
+          //       ],
+          //     )
+          //   ],
+          // ),
+          SizedBox(height: 15),
+          // Container(
+          //   width: MediaQuery.of(context).size.width,
+          //   padding: const EdgeInsets.all(5),
+          //   decoration: BoxDecoration(
+          //       color: Colors.green[200],
+          //       borderRadius: BorderRadius.circular(12)),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: [
+          //       Text('LEVEL : 10'),
+          //     ],
+          //   ),
+          // ),
+          // SizedBox(height: 15),
+          // Container(
+          //   width: MediaQuery.of(context).size.width,
+          //   padding: const EdgeInsets.all(5),
+          //   decoration: BoxDecoration(
+          //       color: Color.fromARGB(255, 255, 255, 255),
+          //       borderRadius: BorderRadius.circular(12)),
+          //   child: Column(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: [
+          //       Text('Projects'),
+          //       Column(
+          //         children: [
+          //           const SizedBox(
+          //             height: 15,
+          //           ),
+          //           Row(
+          //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //             children: const [Text('Project_name'), Text('100')],
+          //           ),
+          //           const SizedBox(
+          //             height: 15,
+          //           ),
+          //           Row(
+          //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //             children: const [Text('Project_name'), Text('100')],
+          //           ),
+          //         ],
+          //       )
+          //     ],
+          //   ),
+          // ),
+          // SizedBox(height: 15),
+          // GraphChart(),
+        ],
       ),
     );
   }
