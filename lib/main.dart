@@ -6,6 +6,7 @@ import 'package:swiftycompanion/LoginPage.dart';
 import 'package:swiftycompanion/SearchPage.dart';
 import 'package:swiftycompanion/radar_chart.dart';
 
+//com.example.swiftycompanion
 void main() {
   runApp( MyApp(),
   );
@@ -48,6 +49,5 @@ class _MyAppState extends State<MyApp> {
         routeInformationParser: _router.routeInformationParser,
         routerDelegate: _router.routerDelegate,
         routeInformationProvider: _router.routeInformationProvider,
-
   );
 }

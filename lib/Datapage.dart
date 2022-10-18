@@ -1,7 +1,12 @@
+// import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swiftycompanion/Graphechart.dart';
 import 'package:swiftycompanion/radar_chart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert' as convert;
+import 'package:http/http.dart' as http;
 
 class DataPage extends StatefulWidget {
   const DataPage({super.key});
@@ -11,127 +16,172 @@ class DataPage extends StatefulWidget {
 }
 
 class _DataPageState extends State<DataPage> {
+  Future? databaseFuture;
+  @override
+  void initState() {
+    databaseFuture = getdata();
+    print('databaseFuture=$databaseFuture');
+  }
+
+  // var data;
+  Future getdata() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? action = prefs.getString('token');
+    var uritmp = Uri.parse('https://api.intra.42.fr/v2/me');
+    http.Response res = await http.get(uritmp, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $action',
+    });
+    return convert.jsonDecode(res.body);
+    // setState(() {
+    //      data = convert.jsonDecode(res.body);
+    //      print(data);
+    // });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: new Image.asset(
-          'images/42.jpeg',
-          width: 80.0,
-          height: 80.0,
-          fit: BoxFit.cover,
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        // elevation: 0.0,
-        leading: IconButton(
-          onPressed: () {
-            context.go('/page2');
-          },
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.grey,
-          ),
-        ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {
-             print('dark or light mode');
-            },
-            icon: const Icon(
-              Icons.light_mode,
-              color: Colors.grey,
-            ),
-          ),
-        ],
-      ),
-      // body: SingleChildScrollView(
-      //   child: GraphChart(),
-      // ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(15),
-                width: 120,
-                height: 120,
-                child: Image.asset('images/86.png'),
+    // getdata();
+    return FutureBuilder(
+      future: databaseFuture,
+      builder: (context, snapshot) {
+        // print(snapshot.data['image']['link']);
+        // final uri = Uri.parse('https://cdn.intra.42.fr/users/medium_ahaddad.jpg')
+        // var file = File(uri);
+        if (snapshot.hasData) {
+          return Scaffold(
+            appBar: AppBar(
+              title: new Image.asset(
+                'images/42.jpeg',
+                width: 80.0,
+                height: 80.0,
+                fit: BoxFit.cover,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('username'),
-                  SizedBox(height: 10),
-                  Text('Wallet'),
-                  SizedBox(height: 10),
-                  Text('Collision'),
-                ],
-              )
-            ],
-          ),
-          SizedBox(height: 15),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            padding: const EdgeInsets.all(5),
-            decoration: BoxDecoration(
-                color: Colors.green[200],
-                borderRadius: BorderRadius.circular(12)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('LEVEL : 10'),
+              centerTitle: true,
+              backgroundColor: Colors.white,
+              // elevation: 0.0,
+              leading: IconButton(
+                onPressed: () {
+                  context.go('/page2');
+                },
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: Colors.grey,
+                ),
+              ),
+              actions: <Widget>[
+                IconButton(
+                  onPressed: () {
+                    print('dark or light mode');
+                  },
+                  icon: const Icon(
+                    Icons.light_mode,
+                    color: Colors.grey,
+                  ),
+                ),
               ],
             ),
-          ),
-          SizedBox(height: 15),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 300,
-                height: 200,
-                // child: GraphChart()
-                child: RadarChartTest(),
-              ),
-            ],
-          ),
-          SizedBox(height: 15),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            padding: const EdgeInsets.all(5),
-            decoration: BoxDecoration(
-                color: Color.fromARGB(255, 255, 255, 255),
-                borderRadius: BorderRadius.circular(12)),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            body: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               children: [
-                Text('Projects'),
-                Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    const SizedBox(
-                      height: 15,
+                    Container(
+                      padding: const EdgeInsets.all(15),
+                      width: 120,
+                      height: 120,
+                      child: new ListView(
+                        children: <Widget>[
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.circular(12),
+                            ),
+                            child: new Image.network(
+                                snapshot.data['image']['link']),
+                          ),
+                        ],
+                      ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [Text('Project_name'), Text('100')],
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [Text('Project_name'), Text('100')],
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('username'),
+                        SizedBox(height: 10),
+                        Text('Wallet'),
+                        SizedBox(height: 10),
+                        Text('Collision'),
+                      ],
+                    )
+                  ],
+                ),
+                SizedBox(height: 15),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                      color: Colors.green[200],
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('LEVEL : 10'),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 15),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 300,
+                      height: 200,
+                      // child: GraphChart()
+                      child: RadarChartTest(),
                     ),
                   ],
-                )
+                ),
+                SizedBox(height: 15),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Projects'),
+                      Column(
+                        children: [
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: const [Text('Project_name'), Text('100')],
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: const [Text('Project_name'), Text('100')],
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
               ],
             ),
-          ),
-        ],
-      ),
+          );
+        } else {
+          return Text('data');
+        }
+      },
     );
   }
 }
