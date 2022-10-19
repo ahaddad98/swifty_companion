@@ -26,20 +26,23 @@ class _MyAppState extends State<MyApp> {
         path: '/',
         pageBuilder: (context, state) => MaterialPage<void>(
           key: state.pageKey,
-          child: const Loginpage(),
+          child:  Loginpage(),
         ),
       ),
       GoRoute(
         path: '/page2',
         pageBuilder: (context, state) => MaterialPage<void>(
           key: state.pageKey,
-          child: const SearchPage(),
+          child:  SearchPage(),
         ),
       ),GoRoute(
         path: '/page3',
         pageBuilder: (context, state) => MaterialPage<void>(
           key: state.pageKey,
-          child: const DataPage(),
+          child:  DataPage(
+            key: state.pageKey,
+            index: state.params['index'], 
+          ),
         ),
       ),
     ],

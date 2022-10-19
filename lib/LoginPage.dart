@@ -8,8 +8,6 @@ import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-// import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
 
@@ -26,15 +24,11 @@ class _LoginpageState extends State<Loginpage> {
     try {
       final result = await FlutterWebAuth.authenticate(url: url, callbackUrlScheme: callbackUrlScheme);
       arr = result.split('code=');
-      // final storage = new FlutterSecureStorage();
-
-// Write value 
       final String code;
       if (!arr.isEmpty)
       {
         code = arr[1];
         log('code =  $code');
-        context.go('/page3');
         var uritmp = Uri.parse('https://api.intra.42.fr/oauth/token');
         http.Response res = await http.post(
           uritmp,
@@ -47,9 +41,8 @@ class _LoginpageState extends State<Loginpage> {
           },
         );
         var a = convert.jsonDecode(res.body);
-        // print(a['access_token']);
         await prefs.setString('token', a['access_token']);
-        // await storage.write(key: 'token', value: a['access_token']);
+        context.go('/page2');
       }
     } on PlatformException catch (e) {
       // setState(() {

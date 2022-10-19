@@ -9,7 +9,8 @@ import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
 
 class DataPage extends StatefulWidget {
-  const DataPage({super.key});
+  var index; 
+  DataPage({super.key, this.index});
 
   @override
   State<DataPage> createState() => _DataPageState();
@@ -17,10 +18,13 @@ class DataPage extends StatefulWidget {
 
 class _DataPageState extends State<DataPage> {
   Future? databaseFuture;
+
   @override
   void initState() {
+    // pr  a = new GoRouteData();
+    // print('im here');
+    // print(myurl);
     databaseFuture = getdata();
-    print('databaseFuture=$databaseFuture');
   }
 
   // var data;
@@ -39,10 +43,12 @@ class _DataPageState extends State<DataPage> {
     //      print(data);
     // });
   }
+    
 
   @override
   Widget build(BuildContext context) {
     // getdata();
+
     return FutureBuilder(
       future: databaseFuture,
       builder: (context, snapshot) {
