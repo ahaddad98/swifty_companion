@@ -3,13 +3,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swiftycompanion/Graphechart.dart';
+import 'package:swiftycompanion/SearchPage.dart';
 import 'package:swiftycompanion/radar_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
 
 class DataPage extends StatefulWidget {
-  var index; 
+  var index;
   DataPage({super.key, this.index});
 
   @override
@@ -18,12 +19,9 @@ class DataPage extends StatefulWidget {
 
 class _DataPageState extends State<DataPage> {
   Future? databaseFuture;
-
+  
   @override
   void initState() {
-    // pr  a = new GoRouteData();
-    // print('im here');
-    // print(myurl);
     databaseFuture = getdata();
   }
 
@@ -31,7 +29,8 @@ class _DataPageState extends State<DataPage> {
   Future getdata() async {
     final prefs = await SharedPreferences.getInstance();
     final String? action = prefs.getString('token');
-    var uritmp = Uri.parse('https://api.intra.42.fr/v2/me');
+    final String login = widget.index;
+    var uritmp = Uri.parse('https://api.intra.42.fr/v2/users/$login');
     http.Response res = await http.get(uritmp, headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -43,7 +42,6 @@ class _DataPageState extends State<DataPage> {
     //      print(data);
     // });
   }
-    
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +67,12 @@ class _DataPageState extends State<DataPage> {
               // elevation: 0.0,
               leading: IconButton(
                 onPressed: () {
-                  context.go('/page2');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchPage(),
+                    ),
+                  );
                 },
                 icon: Icon(
                   Icons.arrow_back,
@@ -99,13 +102,10 @@ class _DataPageState extends State<DataPage> {
                       width: 120,
                       height: 120,
                       child: new ListView(
-                        children: <Widget>[
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(12),
-                            ),
-                            child: new Image.network(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(100.0),
+                            child: Image.network(
                                 snapshot.data['image']['link']),
                           ),
                         ],
@@ -119,6 +119,20 @@ class _DataPageState extends State<DataPage> {
                         Text('Wallet'),
                         SizedBox(height: 10),
                         Text('Collision'),
+                        SizedBox(height: 10),
+                        Text('correction_point'),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(snapshot.data['login'].toString()),
+                        SizedBox(height: 10),
+                        Text(snapshot.data['wallet'].toString()),
+                        SizedBox(height: 10),
+                        Text('Collision'),
+                        SizedBox(height: 10),
+                        Text(snapshot.data['correction_point'].toString()),
                       ],
                     )
                   ],

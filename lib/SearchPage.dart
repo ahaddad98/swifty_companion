@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:swiftycompanion/Datapage.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -35,18 +36,21 @@ class _SearchPageState extends State<SearchPage> {
           border: OutlineInputBorder(),
           // prefixIcon: Icon(Icons.send ,),
           suffixIcon: IconButton(
-            onPressed: (() {
-              final login = _loginname.text;
-              context.go('/page3?index=$login');
-            }),
-            icon: IconButton(
-              icon: Icon(Icons.send),
-              onPressed: () {
+              onPressed: (() {
                 final login = _loginname.text;
                 context.go('/page3?index=$login');
-              },
-              ) 
-          ),
+              }),
+              icon: IconButton(
+                icon: Icon(Icons.send),
+                onPressed: () {
+                  final login = _loginname.text;
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => DataPage(
+                        index: _loginname.text
+                      )));
+                  // context.go('/page3?index=$login');
+                },
+              )),
         ),
       ),
     )));

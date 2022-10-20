@@ -7,6 +7,7 @@ import 'dart:async';
 import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:swiftycompanion/SearchPage.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -42,6 +43,7 @@ class _LoginpageState extends State<Loginpage> {
         );
         var a = convert.jsonDecode(res.body);
         await prefs.setString('token', a['access_token']);
+
         context.go('/page2');
       }
     } on PlatformException catch (e) {
@@ -95,6 +97,12 @@ class _LoginpageState extends State<Loginpage> {
                     ),
                     onPressed: () {
                       this.authenticate(context);
+                      Navigator.push(context, 
+                        MaterialPageRoute(
+                          builder: (context) => SearchPage(
+                          )
+                          )
+                      );
                     },
                     child: const Text('Login'),
                   ),
