@@ -44,10 +44,12 @@ class _SearchPageState extends State<SearchPage> {
                 icon: Icon(Icons.send),
                 onPressed: () {
                   final login = _loginname.text;
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => DataPage(
-                        index: _loginname.text
-                      )));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DataPage(index: _loginname.text),
+                    ),
+                  );
                   // context.go('/page3?index=$login');
                 },
               )),
