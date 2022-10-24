@@ -8,6 +8,7 @@ import 'package:swiftycompanion/radar_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class DataPage extends StatefulWidget {
   var index;
@@ -19,7 +20,7 @@ class DataPage extends StatefulWidget {
 
 class _DataPageState extends State<DataPage> {
   Future? databaseFuture;
-  
+
   @override
   void initState() {
     databaseFuture = getdata();
@@ -29,20 +30,38 @@ class _DataPageState extends State<DataPage> {
   Future getdata() async {
     final prefs = await SharedPreferences.getInstance();
     final String? action = prefs.getString('token');
+    final String? refaction = prefs.getString('refreshtoken');
     final String login = widget.index;
-    var uritmp = Uri.parse('https://api.intra.42.fr/v2/users/$login');
-    http.Response res = await http.get(uritmp, headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $action',
-    });
-    return convert.jsonDecode(res.body);
+    try {
+      var uritmp = Uri.parse('https://api.intra.42.fr/v2/users/$login');
+      http.Response res = await http.get(uritmp, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $action',
+      });
+      return convert.jsonDecode(res.body);
+    } catch (e) {
+      var uritmp = Uri.parse('https://api.intra.42.fr/v2/users/$login');
+      http.Response res = await http.get(uritmp, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $refaction',
+      });
+      return convert.jsonDecode(res.body);
+    }
     // setState(() {
     //      data = convert.jsonDecode(res.body);
     //      print(data);
     // });
   }
-
+String dropdownvalue = 'Item 1';  
+  var items = [
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 4',
+    'Item 5',
+  ];
   @override
   Widget build(BuildContext context) {
     // getdata();
@@ -50,6 +69,8 @@ class _DataPageState extends State<DataPage> {
     return FutureBuilder(
       future: databaseFuture,
       builder: (context, snapshot) {
+        print(snapshot.data['cursus_users'][0]);
+
         // print(snapshot.data['image']['link']);
         // final uri = Uri.parse('https://cdn.intra.42.fr/users/medium_ahaddad.jpg')
         // var file = File(uri);
@@ -104,9 +125,10 @@ class _DataPageState extends State<DataPage> {
                       child: new ListView(
                         children: [
                           ClipRRect(
+                            clipBehavior: Clip.hardEdge,
                             borderRadius: BorderRadius.circular(100.0),
-                            child: Image.network(
-                                snapshot.data['image']['link']),
+                            child:
+                                Image.network(snapshot.data['image']['link']),
                           ),
                         ],
                       ),
@@ -138,6 +160,29 @@ class _DataPageState extends State<DataPage> {
                   ],
                 ),
                 SizedBox(height: 15),
+                DropdownButton(
+                  // Initial Value
+                  value: dropdownvalue,
+
+                  // Down Arrow Icon
+                  icon: const Icon(Icons.keyboard_arrow_down),
+
+                  // Array list of items
+                  items: items.map((String items) {
+                    return DropdownMenuItem(
+                      value: items,
+                      child: Text(items),
+                    );
+                  }).toList(),
+                  // After selecting the desired option,it will
+                  // change button value to selected value
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      dropdownvalue = newValue!;
+                    });
+                  },
+                ),
+                SizedBox(height: 15),
                 Container(
                   width: MediaQuery.of(context).size.width,
                   padding: const EdgeInsets.all(5),
@@ -147,7 +192,8 @@ class _DataPageState extends State<DataPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('LEVEL : 10'),
+                      Text(
+                          'LEVEL : ${snapshot.data['cursus_users'][0]['level']}'),
                     ],
                   ),
                 ),

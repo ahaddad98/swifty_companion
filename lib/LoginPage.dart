@@ -42,8 +42,10 @@ class _LoginpageState extends State<Loginpage> {
           },
         );
         var a = convert.jsonDecode(res.body);
+        var reftoken;
         await prefs.setString('token', a['access_token']);
-
+        await prefs.setString('refreshtoken', a['refresh_token']);
+        print(res.body);        
         context.go('/page2');
       }
     } on PlatformException catch (e) {
