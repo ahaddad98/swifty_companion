@@ -3,15 +3,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swiftycompanion/Graphechart.dart';
+import 'package:swiftycompanion/Percentbar.dart';
 import 'package:swiftycompanion/SearchPage.dart';
 import 'package:swiftycompanion/radar_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 class DataPage extends StatefulWidget {
   var index;
+  var leveldouble = 95.0;
+  var level = 0.0;
+  var leveltoshow = 0.0;
+  
   DataPage({super.key, this.index});
 
   @override
@@ -20,10 +26,16 @@ class DataPage extends StatefulWidget {
 
 class _DataPageState extends State<DataPage> {
   Future? databaseFuture;
-
+  void _incrementCounter(double lev) {
+    setState(() {
+      widget.leveltoshow = lev;
+    });
+  }
   @override
   void initState() {
     databaseFuture = getdata();
+    // print(databaseFuture);
+    // widget.leveltoshow = databaseFuture == '42' ? (databaseFuture.data['cursus_users'][1]['level']) : (databaseFuture.data['cursus_users'][0]['level']);
   }
 
   // var data;
@@ -39,6 +51,8 @@ class _DataPageState extends State<DataPage> {
         'Accept': 'application/json',
         'Authorization': 'Bearer $action',
       });
+      // print(convert.jsonDecode(res.body));
+      widget.leveltoshow = convert.jsonDecode(res.body)['cursus_users'][0]['level'];
       return convert.jsonDecode(res.body);
     } catch (e) {
       var uritmp = Uri.parse('https://api.intra.42.fr/v2/users/$login');
@@ -49,32 +63,31 @@ class _DataPageState extends State<DataPage> {
       });
       return convert.jsonDecode(res.body);
     }
-    // setState(() {
-    //      data = convert.jsonDecode(res.body);
-    //      print(data);
-    // });
   }
-String dropdownvalue = 'Item 1';  
-  var items = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
-  ];
+  
   @override
   Widget build(BuildContext context) {
-    // getdata();
-
     return FutureBuilder(
       future: databaseFuture,
       builder: (context, snapshot) {
-        print(snapshot.data['cursus_users'][0]);
-
-        // print(snapshot.data['image']['link']);
-        // final uri = Uri.parse('https://cdn.intra.42.fr/users/medium_ahaddad.jpg')
-        // var file = File(uri);
         if (snapshot.hasData) {
+          var items1 = <String>[];
+          if (snapshot.data['cursus_users'].length == 2){
+            items1.add('42');
+            items1.add('Piscine');
+          }
+          else {
+            items1.add('Piscine');
+          }
+          String dropdownValue = items1.length == 2 ? '42' : 'Piscine';
+          //  widget.leveldouble = dropdownValue == 'Piscine' ? (snapshot.data['cursus_users'][0]['level'] -
+          //         snapshot.data['cursus_users'][0]['level'].toInt())
+          //     .toStringAsFixed(2) : (snapshot.data['cursus_users'][1]['level'] -
+          //         snapshot.data['cursus_users'][1]['level'].toInt())
+          //     .toStringAsFixed(2);
+          print('heer${widget.leveldouble}');
+          // widget.level = double.parse(widget.leveldouble);
+          // widget.leveltoshow = dropdownValue == '42' ? (snapshot.data['cursus_users'][1]['level']) : (snapshot.data['cursus_users'][0]['level']);
           return Scaffold(
             appBar: AppBar(
               title: new Image.asset(
@@ -160,43 +173,31 @@ String dropdownvalue = 'Item 1';
                   ],
                 ),
                 SizedBox(height: 15),
-                DropdownButton(
-                  // Initial Value
-                  value: dropdownvalue,
-
-                  // Down Arrow Icon
-                  icon: const Icon(Icons.keyboard_arrow_down),
-
-                  // Array list of items
-                  items: items.map((String items) {
-                    return DropdownMenuItem(
-                      value: items,
-                      child: Text(items),
-                    );
-                  }).toList(),
-                  // After selecting the desired option,it will
-                  // change button value to selected value
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      dropdownvalue = newValue!;
-                    });
-                  },
-                ),
-                SizedBox(height: 15),
                 Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      color: Colors.green[200],
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                          'LEVEL : ${snapshot.data['cursus_users'][0]['level']}'),
-                    ],
+                  height: 60,
+                  width: 100,
+                  padding: EdgeInsets.symmetric(horizontal: 60),
+                  child: DropdownButtonFormField(
+                    decoration: InputDecoration(),
+                    value: dropdownValue,
+                    onChanged: (String? newValue) {
+
+                      _incrementCounter(newValue == '42' ? (snapshot.data['cursus_users'][1]['level']) : (snapshot.data['cursus_users'][0]['level']));
+                    },
+                    items:  items1
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
+                SizedBox(height: 15),
+                Percentind(level: widget.level, leveltoshow: widget.leveltoshow),
                 SizedBox(height: 15),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -204,8 +205,7 @@ String dropdownvalue = 'Item 1';
                     SizedBox(
                       width: 300,
                       height: 200,
-                      // child: GraphChart()
-                      child: RadarChartTest(),
+                      child: RadarChartTest(skills: snapshot.data['cursus_users'][0]['skills']),
                     ),
                   ],
                 ),

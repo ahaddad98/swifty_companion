@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_radar_chart/flutter_radar_chart.dart';
 
 class RadarChartTest extends StatefulWidget {
-  const RadarChartTest({super.key});
+  var skills;
+  List<String> features = [];
+  List<num> data = [];
+   RadarChartTest({super.key, required this.skills});
 
   @override
   State<RadarChartTest> createState() => _RadarChartState();
@@ -11,13 +14,22 @@ class RadarChartTest extends StatefulWidget {
 class _RadarChartState extends State<RadarChartTest> {
   bool darkMode = false;
   bool useSides = false;
-  double numberOfFeatures = 20;
+  double numberOfFeatures = 40;
+  @override
+  void initState() {
+    numberOfFeatures = widget.skills.length.toDouble();
+    for (var i = 0; i < widget.skills.length ; i++) {
+      widget.data.add(widget.skills[i]['level']);
+      widget.features.add(widget.skills[i]['name']);
+    }
+    print(widget.data);
+  }
   @override
   Widget build(BuildContext context) {
-    const ticks = [7, 14, 21, 28, 35];
-    var features = ["AA", "BB", "CC", "DD", "EE", "FF", "GG", "HH", "AA", "BB", "CC", "DD", "EE", "FF", "GG", "HH" , "AA", "BB", "CC", "DD", "EE"];
+    const ticks = [0,5, 10,15,20];
+    var features = widget.features;
     var data = [
-      [10.0, 20, 28, 5, 16, 15, 17, 6, 10.0, 20, 28, 5, 16, 15, 17, 6, 10.0, 20, 28, 5, 16],
+      widget.data,
     ];
 
     features = features.sublist(0, numberOfFeatures.floor());
