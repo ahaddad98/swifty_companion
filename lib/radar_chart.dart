@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_radar_chart/flutter_radar_chart.dart';
 
 class RadarChartTest extends StatefulWidget {
-  var skills;
+  var skills = [];
   List<String> features = [];
   List<num> data = [];
-   RadarChartTest({super.key, required this.skills});
+  RadarChartTest({super.key, required this.skills});
 
   @override
   State<RadarChartTest> createState() => _RadarChartState();
@@ -18,15 +18,18 @@ class _RadarChartState extends State<RadarChartTest> {
   @override
   void initState() {
     numberOfFeatures = widget.skills.length.toDouble();
-    for (var i = 0; i < widget.skills.length ; i++) {
-      widget.data.add(widget.skills[i]['level']);
-      widget.features.add(widget.skills[i]['name']);
+    if (widget.skills.length > 0) {
+      for (var i = 0; i < widget.skills.length; i++) {
+        widget.data.add(widget.skills[i]['level']);
+        widget.features.add(widget.skills[i]['name']);
+      }
+      print(widget.data);
     }
-    print(widget.data);
   }
+
   @override
   Widget build(BuildContext context) {
-    const ticks = [0,5, 10,15,20];
+    const ticks = [0, 5, 10, 15, 20];
     var features = widget.features;
     var data = [
       widget.data,
