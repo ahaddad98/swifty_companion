@@ -17,7 +17,7 @@ class DataPage extends StatefulWidget {
   var leveldouble = 95.0;
   var level = 0.0;
   var leveltoshow = 0.0;
-  
+
   DataPage({super.key, this.index});
 
   @override
@@ -31,6 +31,7 @@ class _DataPageState extends State<DataPage> {
       widget.leveltoshow = lev;
     });
   }
+
   @override
   void initState() {
     databaseFuture = getdata();
@@ -52,7 +53,8 @@ class _DataPageState extends State<DataPage> {
         'Authorization': 'Bearer $action',
       });
       // print(convert.jsonDecode(res.body));
-      widget.leveltoshow = convert.jsonDecode(res.body)['cursus_users'][0]['level'];
+      widget.leveltoshow =
+          convert.jsonDecode(res.body)['cursus_users'][0]['level'];
       return convert.jsonDecode(res.body);
     } catch (e) {
       var uritmp = Uri.parse('https://api.intra.42.fr/v2/users/$login');
@@ -64,7 +66,7 @@ class _DataPageState extends State<DataPage> {
       return convert.jsonDecode(res.body);
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -72,22 +74,24 @@ class _DataPageState extends State<DataPage> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           var items1 = <String>[];
-          if (snapshot.data['cursus_users'].length == 2){
+          if (snapshot.data['cursus_users'].length == 2) {
             items1.add('42');
             items1.add('Piscine');
-          }
-          else {
+          } else {
             items1.add('Piscine');
           }
           String dropdownValue = items1.length == 2 ? '42' : 'Piscine';
-          //  widget.leveldouble = dropdownValue == 'Piscine' ? (snapshot.data['cursus_users'][0]['level'] -
-          //         snapshot.data['cursus_users'][0]['level'].toInt())
-          //     .toStringAsFixed(2) : (snapshot.data['cursus_users'][1]['level'] -
-          //         snapshot.data['cursus_users'][1]['level'].toInt())
-          //     .toStringAsFixed(2);
-          print('heer${widget.leveldouble}');
-          // widget.level = double.parse(widget.leveldouble);
-          // widget.leveltoshow = dropdownValue == '42' ? (snapshot.data['cursus_users'][1]['level']) : (snapshot.data['cursus_users'][0]['level']);
+          List<num> data = [];
+          List<String> features = [];
+          if (snapshot.data['cursus_users'][1]['skills'] != null) {
+            for (var i = 0;
+                i < snapshot.data['cursus_users'][1]['skills'].length;
+                i++) {
+              data.add(snapshot.data['cursus_users'][1]['skills'][i]['level']);
+              features
+                  .add(snapshot.data['cursus_users'][1]['skills'][i]['name']);
+            }
+          }
           return Scaffold(
             appBar: AppBar(
               title: new Image.asset(
@@ -181,11 +185,11 @@ class _DataPageState extends State<DataPage> {
                     decoration: InputDecoration(),
                     value: dropdownValue,
                     onChanged: (String? newValue) {
-
-                      _incrementCounter(newValue == '42' ? (snapshot.data['cursus_users'][1]['level']) : (snapshot.data['cursus_users'][0]['level']));
+                      _incrementCounter(newValue == '42'
+                          ? (snapshot.data['cursus_users'][1]['level'])
+                          : (snapshot.data['cursus_users'][0]['level']));
                     },
-                    items:  items1
-                        .map<DropdownMenuItem<String>>((String value) {
+                    items: items1.map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(
@@ -197,18 +201,8 @@ class _DataPageState extends State<DataPage> {
                   ),
                 ),
                 SizedBox(height: 15),
-                Percentind(level: widget.level, leveltoshow: widget.leveltoshow),
-                SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 300,
-                      height: 200,
-                      child: RadarChartTest(skills: snapshot.data['cursus_users'][0]['skills']),
-                    ),
-                  ],
-                ),
+                Percentind(
+                    level: widget.level, leveltoshow: widget.leveltoshow),
                 SizedBox(height: 15),
                 Container(
                   width: MediaQuery.of(context).size.width,

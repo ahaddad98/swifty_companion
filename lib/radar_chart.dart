@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_radar_chart/flutter_radar_chart.dart';
 
 class RadarChartTest extends StatefulWidget {
-  var skills = [];
-  List<String> features = [];
-  List<num> data = [];
-  RadarChartTest({super.key, required this.skills});
+  var skills;
+  int skill_length;
+  List<String> features ;
+  List<num> data;
+  RadarChartTest({super.key, required this.skills, required this.skill_length,required this.data,required this.features});
 
   @override
   State<RadarChartTest> createState() => _RadarChartState();
@@ -14,16 +15,24 @@ class RadarChartTest extends StatefulWidget {
 class _RadarChartState extends State<RadarChartTest> {
   bool darkMode = false;
   bool useSides = false;
-  double numberOfFeatures = 40;
+  double numberOfFeatures = 10;
   @override
   void initState() {
-    numberOfFeatures = widget.skills.length.toDouble();
-    if (widget.skills.length > 0) {
+    numberOfFeatures = widget.skill_length.toDouble();
+    // print(widget.skills);
+    // numberOfFeatures = widget.skills?.length.toDouble();
+    List<num> data = [];
+    List<String> features = [];
+    if (widget.skills != null) {
       for (var i = 0; i < widget.skills.length; i++) {
-        widget.data.add(widget.skills[i]['level']);
-        widget.features.add(widget.skills[i]['name']);
+        data.add(widget.skills[i]['level']);
+        features.add(widget.skills[i]['name']);
       }
-      print(widget.data);
+      setState(() {
+        widget.data = data;
+        widget.features = features;
+      });
+      
     }
   }
 
