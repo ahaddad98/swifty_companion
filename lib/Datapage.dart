@@ -239,7 +239,9 @@ class _DataPageState extends State<DataPage> {
             ),
           );
         } else {
-          return Text('data');
+          return Scaffold(
+            body: Center(child: const CircularProgressIndicator()),
+          );
         }
       },
     );
