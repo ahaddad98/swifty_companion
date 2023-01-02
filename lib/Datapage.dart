@@ -39,6 +39,10 @@ class _DataPageState extends State<DataPage> {
     // widget.leveltoshow = databaseFuture == '42' ? (databaseFuture.data['cursus_users'][1]['level']) : (databaseFuture.data['cursus_users'][0]['level']);
   }
 
+  var _iconbool = false;
+  var _light_mode = Icons.light_mode;
+  var _dark_mode = Icons.dark_mode;
+
   // var data;
   Future getdata() async {
     final prefs = await SharedPreferences.getInstance();
@@ -52,7 +56,7 @@ class _DataPageState extends State<DataPage> {
         'Accept': 'application/json',
         'Authorization': 'Bearer $action',
       });
-      // print(convert.jsonDecode(res.body));
+      print(convert.jsonDecode(res.body));
       widget.leveltoshow =
           convert.jsonDecode(res.body)['cursus_users'][0]['level'];
       return convert.jsonDecode(res.body);
@@ -69,12 +73,19 @@ class _DataPageState extends State<DataPage> {
 
   @override
   Widget build(BuildContext context) {
+    var defaultTextStyle = TextStyle(
+      color: !_iconbool ? Colors.black : Colors.white,
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+    );
     return FutureBuilder(
       future: databaseFuture,
       builder: (context, snapshot) {
+        print(snapshot.data['projects_users']);
         if (snapshot.hasData) {
           var items1 = <String>[];
-          if (snapshot.data['cursus_users'].length == 2) {
+          if (snapshot.data['cursus_users'] != null &&
+              snapshot.data['cursus_users'].length == 2) {
             items1.add('42');
             items1.add('Piscine');
           } else {
@@ -93,6 +104,8 @@ class _DataPageState extends State<DataPage> {
             }
           }
           return Scaffold(
+            backgroundColor:
+                !_iconbool ? Colors.white : Color.fromARGB(255, 52, 50, 83),
             appBar: AppBar(
               title: new Image.asset(
                 'images/42.jpeg',
@@ -101,7 +114,8 @@ class _DataPageState extends State<DataPage> {
                 fit: BoxFit.cover,
               ),
               centerTitle: true,
-              backgroundColor: Colors.white,
+              backgroundColor:
+                  !_iconbool ? Colors.white : Color.fromARGB(255, 52, 50, 83),
               // elevation: 0.0,
               leading: IconButton(
                 onPressed: () {
@@ -120,16 +134,21 @@ class _DataPageState extends State<DataPage> {
               actions: <Widget>[
                 IconButton(
                   onPressed: () {
+                    setState(() {
+                      _iconbool = !_iconbool;
+                    });
                     print('dark or light mode');
                   },
-                  icon: const Icon(
-                    Icons.light_mode,
+                  icon: Icon(
+                    _iconbool ? _dark_mode : _light_mode,
                     color: Colors.grey,
                   ),
                 ),
               ],
             ),
             body: ListView(
+              // backgroundColor:  !_iconbool ?   Colors.white : Color.fromARGB(255, 52, 50, 83),
+
               padding: const EdgeInsets.symmetric(horizontal: 15),
               children: [
                 Row(
@@ -153,25 +172,27 @@ class _DataPageState extends State<DataPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('username'),
+                        Text('username',
+                        style: defaultTextStyle,
+                        ),
                         SizedBox(height: 10),
-                        Text('Wallet'),
+                        Text('Wallet', style: defaultTextStyle,),
                         SizedBox(height: 10),
-                        Text('Collision'),
+                        Text('Collision', style: defaultTextStyle,),
                         SizedBox(height: 10),
-                        Text('correction_point'),
+                        Text('correction_point', style: defaultTextStyle,),
                       ],
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(snapshot.data['login'].toString()),
+                        Text(snapshot.data['login'].toString(), style: defaultTextStyle,),
                         SizedBox(height: 10),
-                        Text(snapshot.data['wallet'].toString()),
+                        Text(snapshot.data['wallet'].toString(), style: defaultTextStyle,),
                         SizedBox(height: 10),
-                        Text('Collision'),
+                        Text('Collision', style: defaultTextStyle,),
                         SizedBox(height: 10),
-                        Text(snapshot.data['correction_point'].toString()),
+                        Text(snapshot.data['correction_point'].toString(), style: defaultTextStyle,),
                       ],
                     )
                   ],
@@ -180,6 +201,7 @@ class _DataPageState extends State<DataPage> {
                 Container(
                   height: 60,
                   width: 100,
+                  // color: !_iconbool ?   Colors.white : Color.fromARGB(255, 52, 50, 83),
                   padding: EdgeInsets.symmetric(horizontal: 60),
                   child: DropdownButtonFormField(
                     decoration: InputDecoration(),
@@ -194,7 +216,7 @@ class _DataPageState extends State<DataPage> {
                         value: value,
                         child: Text(
                           value,
-                          style: TextStyle(fontSize: 15),
+                          style: defaultTextStyle,
                         ),
                       );
                     }).toList(),
@@ -226,10 +248,6 @@ class _DataPageState extends State<DataPage> {
                           const SizedBox(
                             height: 15,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [Text('Project_name'), Text('100')],
-                          ),
                         ],
                       )
                     ],
@@ -240,6 +258,7 @@ class _DataPageState extends State<DataPage> {
           );
         } else {
           return Scaffold(
+            // body: Center(child: const Text('sdklfhsdlkfgh')),
             body: Center(child: const CircularProgressIndicator()),
           );
         }

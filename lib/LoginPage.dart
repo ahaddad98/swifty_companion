@@ -18,7 +18,7 @@ class Loginpage extends StatefulWidget {
 
 class _LoginpageState extends State<Loginpage> {
   void authenticate(BuildContext context ) async {
-    final url = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-1bb996bf6d9b8215ae9f5a2eb4c810988202915bbc30244d37ed254ae3952649&redirect_uri=com.example.swiftycompanion%3A%2F%2Fcallbacktest&response_type=code';
+    final url = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-4e07c639697d9451de605a04a8d877090de6a7b32834a0ccd2027acabe652c35&redirect_uri=com.example.swiftycompanion%3A%2F%2Fcallbacktest&response_type=code';
     final callbackUrlScheme = 'com.example.swiftycompanion';
     final prefs = await SharedPreferences.getInstance();
     var arr = [];
@@ -30,13 +30,14 @@ class _LoginpageState extends State<Loginpage> {
       {
         code = arr[1];
         log('code =  $code');
+        print('jejejeje');
         var uritmp = Uri.parse('https://api.intra.42.fr/oauth/token');
         http.Response res = await http.post(
           uritmp,
           body:{
             'code': code,
-            'client_id': 'u-s4t2ud-1bb996bf6d9b8215ae9f5a2eb4c810988202915bbc30244d37ed254ae3952649',
-            'client_secret': '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',
+            'client_id': 'u-s4t2ud-4e07c639697d9451de605a04a8d877090de6a7b32834a0ccd2027acabe652c35',
+            'client_secret': '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',
             'redirect_uri': 'com.example.swiftycompanion://callbacktest',
             'grant_type': 'authorization_code',
           },
@@ -49,6 +50,7 @@ class _LoginpageState extends State<Loginpage> {
         context.go('/page2');
       }
     } on PlatformException catch (e) {
+      print(e);
       // setState(() {
       //    print('token');
       //    _status = 'Got error: $e'; 
