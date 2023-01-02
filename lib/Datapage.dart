@@ -241,7 +241,7 @@ class _DataPageState extends State<DataPage> {
                           const SizedBox(
                             height: 15,
                           ),
-                          Row(
+                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: const [Text('Project_name'), Text('100')],
                           ),
