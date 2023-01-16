@@ -16,7 +16,7 @@ class DataPage extends StatefulWidget {
   var index;
   var leveldouble = 95.0;
   var level = 0.0;
-  var leveltoshow = 0.0;
+  var leveltoshow = 42.0;
 
   DataPage({super.key, this.index});
 
@@ -76,13 +76,19 @@ class _DataPageState extends State<DataPage> {
     var defaultTextStyle = TextStyle(
       color: !_iconbool ? Colors.black : Colors.white,
       fontSize: 16,
-      fontWeight: FontWeight.w400,
+      fontWeight: FontWeight.w500,
+      fontFamily: 'Roboto'
     );
     return FutureBuilder(
       future: databaseFuture,
       builder: (context, snapshot) {
-        print(snapshot.data['projects_users']);
         if (snapshot.hasData) {
+
+          print(snapshot.data['projects_users']);
+          // setState(() {
+          //   leveltoshow = snapshot.data['cursus_users'][0]['level'];
+          // });
+          List<String> items20 = ["Item 1", "Item 2", "Item 3"];
           var items1 = <String>[];
           if (snapshot.data['cursus_users'] != null &&
               snapshot.data['cursus_users'].length == 2) {
@@ -172,27 +178,49 @@ class _DataPageState extends State<DataPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('username',
-                        style: defaultTextStyle,
+                        Text(
+                          'username',
+                          style: defaultTextStyle,
                         ),
                         SizedBox(height: 10),
-                        Text('Wallet', style: defaultTextStyle,),
+                        Text(
+                          'Wallet',
+                          style: defaultTextStyle,
+                        ),
                         SizedBox(height: 10),
-                        Text('Collision', style: defaultTextStyle,),
+                        Text(
+                          'Collision',
+                          style: defaultTextStyle,
+                        ),
                         SizedBox(height: 10),
-                        Text('correction_point', style: defaultTextStyle,),
+                        Text(
+                          'correction_point',
+                          style: defaultTextStyle,
+                        ),
                       ],
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(snapshot.data['login'].toString(), style: defaultTextStyle,),
+                        Text(
+                          snapshot.data['login'].toString(),
+                          style: defaultTextStyle,
+                        ),
                         SizedBox(height: 10),
-                        Text(snapshot.data['wallet'].toString(), style: defaultTextStyle,),
+                        Text(
+                          snapshot.data['wallet'].toString(),
+                          style: defaultTextStyle,
+                        ),
                         SizedBox(height: 10),
-                        Text('Collision', style: defaultTextStyle,),
+                        Text(
+                          'Collision',
+                          style: defaultTextStyle,
+                        ),
                         SizedBox(height: 10),
-                        Text(snapshot.data['correction_point'].toString(), style: defaultTextStyle,),
+                        Text(
+                          snapshot.data['correction_point'].toString(),
+                          style: defaultTextStyle,
+                        ),
                       ],
                     )
                   ],
@@ -226,36 +254,62 @@ class _DataPageState extends State<DataPage> {
                 Percentind(
                     level: widget.level, leveltoshow: widget.leveltoshow),
                 SizedBox(height: 15),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 255, 255, 255),
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Projects'),
-                      Column(
-                        children: [
-                          const SizedBox(
-                            height: 15,
-                          ),
-                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [Text('Project_name'), Text('100')],
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text("Projects",
+                          style: defaultTextStyle),
+                    ),
+                  ],
                 ),
+                Container(
+                  height: 300,
+                  child: ListView.builder(
+                    itemCount: snapshot.data['projects_users'].length,
+                    itemBuilder: (context, index) {
+                      if (snapshot.data['projects_users'][index]
+                              ["final_mark"] !=
+                          null) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                snapshot.data['projects_users'][index]
+                                        ["project"]["name"]
+                                    .toString(),
+                                    style: defaultTextStyle,
+                                // style: TextStyle(
+                                //     fontSize: 14, fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                  snapshot.data['projects_users'][index]
+                                          ["final_mark"]
+                                      .toString(),
+                                      style: defaultTextStyle,
+                            //       style: TextStyle(
+                            //           fontSize: 14,
+                                      // fontWeight: FontWeight.w600)
+                            ),
+                            ],
+                          ),
+                        );
+                      }
+                      return Container(
+                        height: 0,
+                        // child: Text(''),
+                      );
+                    },
+                  ),
+                )
               ],
             ),
           );
+        } else if (snapshot.hasError) {
+          return Text("USER NOT FOUNT GO GOME");
         } else {
           return Scaffold(
             // body: Center(child: const Text('sdklfhsdlkfgh')),
