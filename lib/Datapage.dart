@@ -16,7 +16,7 @@ class DataPage extends StatefulWidget {
   var index;
   var leveldouble = 95.0;
   var level = 0.0;
-  var leveltoshow = 42.0;
+  var leveltoshow = 0.0;
 
   DataPage({super.key, this.index});
 
@@ -74,29 +74,31 @@ class _DataPageState extends State<DataPage> {
   @override
   Widget build(BuildContext context) {
     var defaultTextStyle = TextStyle(
-      color: !_iconbool ? Colors.black : Colors.white,
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-      fontFamily: 'Roboto'
-    );
+        color: !_iconbool ? Colors.black : Colors.white,
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        fontFamily: 'Roboto');
     return FutureBuilder(
       future: databaseFuture,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-
-          print(snapshot.data['projects_users']);
-          // setState(() {
-          //   leveltoshow = snapshot.data['cursus_users'][0]['level'];
-          // });
-          List<String> items20 = ["Item 1", "Item 2", "Item 3"];
           var items1 = <String>[];
           if (snapshot.data['cursus_users'] != null &&
               snapshot.data['cursus_users'].length == 2) {
             items1.add('42');
             items1.add('Piscine');
+            if (widget.leveltoshow == 0) 
+              widget.leveltoshow = snapshot.data['cursus_users'][1]['level'];
           } else {
             items1.add('Piscine');
+              if (widget.leveltoshow == 0) widget.leveltoshow = snapshot.data['cursus_users'][0]['level'];
           }
+          // if (widget.leveltoshow == 0 && items1.length == 1)
+          //   setState(() {
+          //   });
+          // if (widget.leveltoshow == 0 && items1.length == 2)
+          //   setState(() {
+          //   });
           String dropdownValue = items1.length == 2 ? '42' : 'Piscine';
           List<num> data = [];
           List<String> features = [];
@@ -259,8 +261,7 @@ class _DataPageState extends State<DataPage> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Text("Projects",
-                          style: defaultTextStyle),
+                      child: Text("Projects", style: defaultTextStyle),
                     ),
                   ],
                 ),
@@ -281,19 +282,19 @@ class _DataPageState extends State<DataPage> {
                                 snapshot.data['projects_users'][index]
                                         ["project"]["name"]
                                     .toString(),
-                                    style: defaultTextStyle,
+                                style: defaultTextStyle,
                                 // style: TextStyle(
                                 //     fontSize: 14, fontWeight: FontWeight.w600),
                               ),
                               Text(
-                                  snapshot.data['projects_users'][index]
-                                          ["final_mark"]
-                                      .toString(),
-                                      style: defaultTextStyle,
-                            //       style: TextStyle(
-                            //           fontSize: 14,
-                                      // fontWeight: FontWeight.w600)
-                            ),
+                                snapshot.data['projects_users'][index]
+                                        ["final_mark"]
+                                    .toString(),
+                                style: defaultTextStyle,
+                                //       style: TextStyle(
+                                //           fontSize: 14,
+                                // fontWeight: FontWeight.w600)
+                              ),
                             ],
                           ),
                         );
