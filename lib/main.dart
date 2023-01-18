@@ -8,7 +8,8 @@ import 'package:swiftycompanion/radar_chart.dart';
 
 //com.example.swiftycompanion
 void main() {
-  runApp( MyApp(),
+  runApp(
+    MyApp(),
   );
 }
 
@@ -26,22 +27,23 @@ class _MyAppState extends State<MyApp> {
         path: '/',
         pageBuilder: (context, state) => MaterialPage<void>(
           key: state.pageKey,
-          child:  Loginpage(),
+          child: Loginpage(),
         ),
       ),
       GoRoute(
         path: '/page2',
         pageBuilder: (context, state) => MaterialPage<void>(
           key: state.pageKey,
-          child:  SearchPage(),
+          child: SearchPage(),
         ),
-      ),GoRoute(
+      ),
+      GoRoute(
         path: '/page3',
         pageBuilder: (context, state) => MaterialPage<void>(
           key: state.pageKey,
-          child:  DataPage(
+          child: DataPage(
             key: state.pageKey,
-            index: state.params['index'], 
+            index: state.params['index'],
           ),
         ),
       ),
@@ -52,5 +54,5 @@ class _MyAppState extends State<MyApp> {
         routeInformationParser: _router.routeInformationParser,
         routerDelegate: _router.routerDelegate,
         routeInformationProvider: _router.routeInformationProvider,
-  );
+      );
 }

@@ -1,5 +1,7 @@
 // import 'dart:html';
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swiftycompanion/Graphechart.dart';
@@ -61,13 +63,14 @@ class _DataPageState extends State<DataPage> {
           convert.jsonDecode(res.body)['cursus_users'][0]['level'];
       return convert.jsonDecode(res.body);
     } catch (e) {
-      var uritmp = Uri.parse('https://api.intra.42.fr/v2/users/$login');
-      http.Response res = await http.get(uritmp, headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $refaction',
-      });
-      return convert.jsonDecode(res.body);
+      log('message');
+      // var uritmp = Uri.parse('https://api.intra.42.fr/v2/users/$login');
+      // http.Response res = await http.get(uritmp, headers: {
+      //   'Content-Type': 'application/json',
+      //   'Accept': 'application/json',
+      //   'Authorization': 'Bearer $refaction',
+      // });
+      // return convert.jsonDecode(res.body);
     }
   }
 
@@ -82,16 +85,20 @@ class _DataPageState extends State<DataPage> {
       future: databaseFuture,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+          print('snapshoot has data *-=============================');
+          print(snapshot.data);
           var items1 = <String>[];
           if (snapshot.data['cursus_users'] != null &&
               snapshot.data['cursus_users'].length == 2) {
-            items1.add('42');
             items1.add('Piscine');
-            if (widget.leveltoshow == 0) 
-              widget.leveltoshow = snapshot.data['cursus_users'][1]['level'];
+            items1.add('42');
+            if (widget.level == 0) {
+              widget.level = snapshot.data['cursus_users'][1]['level'];
+            }
           } else {
             items1.add('Piscine');
-              if (widget.leveltoshow == 0) widget.leveltoshow = snapshot.data['cursus_users'][0]['level'];
+            if (widget.level == 0)
+              widget.level = snapshot.data['cursus_users'][0]['level'];
           }
           // if (widget.leveltoshow == 0 && items1.length == 1)
           //   setState(() {
@@ -310,8 +317,21 @@ class _DataPageState extends State<DataPage> {
             ),
           );
         } else if (snapshot.hasError) {
-          return Text("USER NOT FOUNT GO GOME");
-        } else {
+          print('------------------------------------------------');
+          return Column(
+            children: [
+              Center(child: Text("USER NOT FOUNT GO GOME")),
+            ],
+          );
+        } else if (snapshot.hasData && snapshot.data.lenth == 0) {
+          print('------------------------------------------------');
+          return Column(
+            children: [
+              Center(child: Text("USER NOT FOUNT GO GOME")),
+            ],
+          );
+        }
+        {
           return Scaffold(
             // body: Center(child: const Text('sdklfhsdlkfgh')),
             body: Center(child: const CircularProgressIndicator()),
