@@ -63,7 +63,8 @@ class _DataPageState extends State<DataPage> {
           convert.jsonDecode(res.body)['cursus_users'][0]['level'];
       return convert.jsonDecode(res.body);
     } catch (e) {
-      log('message');
+      log('e');
+      return {};
       // var uritmp = Uri.parse('https://api.intra.42.fr/v2/users/$login');
       // http.Response res = await http.get(uritmp, headers: {
       //   'Content-Type': 'application/json',
@@ -84,9 +85,13 @@ class _DataPageState extends State<DataPage> {
     return FutureBuilder(
       future: databaseFuture,
       builder: (context, snapshot) {
+        if (!snapshot.hasData && snapshot.hasError) {
+          return Center(
+              child:  Container(child: const Text('User Not Found')));
+        }
         if (snapshot.hasData) {
           print('snapshoot has data *-=============================');
-          print(snapshot.data);
+          print(snapshot.data['cursus_users']);
           var items1 = <String>[];
           if (snapshot.data['cursus_users'] != null &&
               snapshot.data['cursus_users'].length == 2) {
@@ -100,16 +105,10 @@ class _DataPageState extends State<DataPage> {
             if (widget.level == 0)
               widget.level = snapshot.data['cursus_users'][0]['level'];
           }
-          // if (widget.leveltoshow == 0 && items1.length == 1)
-          //   setState(() {
-          //   });
-          // if (widget.leveltoshow == 0 && items1.length == 2)
-          //   setState(() {
-          //   });
           String dropdownValue = items1.length == 2 ? '42' : 'Piscine';
           List<num> data = [];
           List<String> features = [];
-          if (snapshot.data['cursus_users'][1]['skills'] != null) {
+          if (snapshot.data['cursus_users'] != null &&snapshot.data['cursus_users'].length == 2 &&  snapshot.data['cursus_users'][1]['skills'] != null) {
             for (var i = 0;
                 i < snapshot.data['cursus_users'][1]['skills'].length;
                 i++) {
@@ -225,7 +224,7 @@ class _DataPageState extends State<DataPage> {
                           'Collision',
                           style: defaultTextStyle,
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           snapshot.data['correction_point'].toString(),
                           style: defaultTextStyle,
@@ -234,14 +233,14 @@ class _DataPageState extends State<DataPage> {
                     )
                   ],
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Container(
                   height: 60,
                   width: 100,
                   // color: !_iconbool ?   Colors.white : Color.fromARGB(255, 52, 50, 83),
-                  padding: EdgeInsets.symmetric(horizontal: 60),
+                  padding: const EdgeInsets.symmetric(horizontal: 60),
                   child: DropdownButtonFormField(
-                    decoration: InputDecoration(),
+                    decoration: const InputDecoration(),
                     value: dropdownValue,
                     onChanged: (String? newValue) {
                       _incrementCounter(newValue == '42'
@@ -259,10 +258,10 @@ class _DataPageState extends State<DataPage> {
                     }).toList(),
                   ),
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Percentind(
                     level: widget.level, leveltoshow: widget.leveltoshow),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
