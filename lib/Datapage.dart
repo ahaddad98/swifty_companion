@@ -19,8 +19,8 @@ class DataPage extends StatefulWidget {
   var leveldouble = 95.0;
   var level = 0.0;
   var leveltoshow = 0.0;
-
-  DataPage({super.key, this.index});
+  var iconbool;
+  DataPage({super.key, this.index, this.iconbool});
 
   @override
   State<DataPage> createState() => _DataPageState();
@@ -34,14 +34,14 @@ class _DataPageState extends State<DataPage> {
     });
   }
 
+  bool _iconbool = false;
   @override
   void initState() {
+    print(" hehehehe ${widget}");
+    // _iconbool = widget.iconbool;
     databaseFuture = getdata();
-    // print(databaseFuture);
-    // widget.leveltoshow = databaseFuture == '42' ? (databaseFuture.data['cursus_users'][1]['level']) : (databaseFuture.data['cursus_users'][0]['level']);
   }
 
-  var _iconbool = false;
   var _light_mode = Icons.light_mode;
   var _dark_mode = Icons.dark_mode;
 
@@ -85,13 +85,15 @@ class _DataPageState extends State<DataPage> {
     return FutureBuilder(
       future: databaseFuture,
       builder: (context, snapshot) {
-        if (!snapshot.hasData && snapshot.hasError) {
-          return Center(
-              child:  Container(child: const Text('User Not Found')));
-        }
+        // if (!snapshot.hasData && snapshot.hasError) {
+        //   return Center(
+        //       child:  Container(child: const Text('User Not Found')));
+        // }
         if (snapshot.hasData) {
           print('snapshoot has data *-=============================');
-          print(snapshot.data['cursus_users']);
+          if (snapshot.data.isEmpty) {
+            return Container(child: Center(child: Text("LOGIN NOT FOUND")));
+          }
           var items1 = <String>[];
           if (snapshot.data['cursus_users'] != null &&
               snapshot.data['cursus_users'].length == 2) {
@@ -108,7 +110,9 @@ class _DataPageState extends State<DataPage> {
           String dropdownValue = items1.length == 2 ? '42' : 'Piscine';
           List<num> data = [];
           List<String> features = [];
-          if (snapshot.data['cursus_users'] != null &&snapshot.data['cursus_users'].length == 2 &&  snapshot.data['cursus_users'][1]['skills'] != null) {
+          if (snapshot.data['cursus_users'] != null &&
+              snapshot.data['cursus_users'].length == 2 &&
+              snapshot.data['cursus_users'][1]['skills'] != null) {
             for (var i = 0;
                 i < snapshot.data['cursus_users'][1]['skills'].length;
                 i++) {

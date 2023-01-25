@@ -4,10 +4,12 @@ import 'package:swiftycompanion/Datapage.dart';
 import 'package:swiftycompanion/Graphechart.dart';
 import 'package:swiftycompanion/LoginPage.dart';
 import 'package:swiftycompanion/SearchPage.dart';
+import 'package:swiftycompanion/provider_setup.dart';
 import 'package:swiftycompanion/radar_chart.dart';
 
 //com.example.swiftycompanion
 void main() {
+  ProviderSetup.setup();
   runApp(
     MyApp(),
   );
@@ -20,6 +22,7 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
+var iconbool = false;
 class _MyAppState extends State<MyApp> {
   final _router = GoRouter(
     routes: [
@@ -44,6 +47,7 @@ class _MyAppState extends State<MyApp> {
           child: DataPage(
             key: state.pageKey,
             index: state.params['index'],
+            iconbool: iconbool,
           ),
         ),
       ),
