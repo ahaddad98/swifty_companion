@@ -17,27 +17,28 @@ class Loginpage extends StatefulWidget {
 }
 
 class _LoginpageState extends State<Loginpage> {
-  void authenticate(BuildContext context ) async {
-    final url = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-4e07c639697d9451de605a04a8d877090de6a7b32834a0ccd2027acabe652c35&redirect_uri=com.example.swiftycompanion%3A%2F%2Fcallbacktest&response_type=code';
+  void authenticate(BuildContext context) async {
+    final url =
+        'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-4e07c639697d9451de605a04a8d877090de6a7b32834a0ccd2027acabe652c35&redirect_uri=com.example.swiftycompanion%3A%2F%2Fcallbacktest&response_type=code';
     final callbackUrlScheme = 'com.example.swiftycompanion';
     final prefs = await SharedPreferences.getInstance();
     var arr = [];
     try {
-      final result = await FlutterWebAuth.authenticate(url: url, callbackUrlScheme: callbackUrlScheme);
+      final result = await FlutterWebAuth.authenticate(
+          url: url, callbackUrlScheme: callbackUrlScheme);
       arr = result.split('code=');
       final String code;
-      if (!arr.isEmpty)
-      {
+      if (!arr.isEmpty) {
         code = arr[1];
-        log('code =  $code');
-        print('jejejeje');
         var uritmp = Uri.parse('https://api.intra.42.fr/oauth/token');
         http.Response res = await http.post(
           uritmp,
-          body:{
+          body: {
             'code': code,
-            'client_id': 'u-s4t2ud-4e07c639697d9451de605a04a8d877090de6a7b32834a0ccd2027acabe652c35',
-            'client_secret': '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',
+            'client_id':
+                'u-s4t2ud-4e07c639697d9451de605a04a8d877090de6a7b32834a0ccd2027acabe652c35',
+            'client_secret':
+                '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',
             'redirect_uri': 'com.example.swiftycompanion://callbacktest',
             'grant_type': 'authorization_code',
           },
@@ -46,14 +47,15 @@ class _LoginpageState extends State<Loginpage> {
         var reftoken;
         await prefs.setString('token', a['access_token']);
         await prefs.setString('refreshtoken', a['refresh_token']);
-        print(res.body);        
+        // await prefs.setString('created_at', a['created_at']);
+        // print(a);
         context.go('/page2');
       }
     } on PlatformException catch (e) {
       print(e);
       // setState(() {
       //    print('token');
-      //    _status = 'Got error: $e'; 
+      //    _status = 'Got error: $e';
       //    });
     }
   }
@@ -101,12 +103,10 @@ class _LoginpageState extends State<Loginpage> {
                     ),
                     onPressed: () {
                       this.authenticate(context);
-                      Navigator.push(context, 
-                        MaterialPageRoute(
-                          builder: (context) => SearchPage(
-                          )
-                          )
-                      );
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SearchPage()));
                     },
                     child: const Text('Login'),
                   ),

@@ -59,11 +59,11 @@ class _DataPageState extends State<DataPage> {
         'Authorization': 'Bearer $action',
       });
       print(convert.jsonDecode(res.body));
-      widget.leveltoshow =
-          convert.jsonDecode(res.body)['cursus_users'][0]['level'];
+      // widget.leveltoshow =
+      //     convert.jsonDecode(res.body)?['cursus_users']?[0]?['level'];
       return convert.jsonDecode(res.body);
     } catch (e) {
-      log('e');
+      log('eeeeeee', error: e);
       return {};
       // var uritmp = Uri.parse('https://api.intra.42.fr/v2/users/$login');
       // http.Response res = await http.get(uritmp, headers: {
@@ -90,7 +90,6 @@ class _DataPageState extends State<DataPage> {
         //       child:  Container(child: const Text('User Not Found')));
         // }
         if (snapshot.hasData) {
-          print('snapshoot has data *-=============================');
           if (snapshot.data.isEmpty) {
             return Container(child: Center(child: Text("LOGIN NOT FOUND")));
           }
@@ -100,12 +99,12 @@ class _DataPageState extends State<DataPage> {
             items1.add('Piscine');
             items1.add('42');
             if (widget.level == 0) {
-              widget.level = snapshot.data['cursus_users'][1]['level'];
+              widget.level = snapshot.data?['cursus_users'][1]['level'];
             }
           } else {
             items1.add('Piscine');
-            if (widget.level == 0)
-              widget.level = snapshot.data['cursus_users'][0]['level'];
+            // if (widget.level == 0 && snapshot.data?['cursus_users'])
+            //   widget.level = snapshot.data?['cursus_users'][0]['level'];
           }
           String dropdownValue = items1.length == 2 ? '42' : 'Piscine';
           List<num> data = [];
