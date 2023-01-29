@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +9,7 @@ import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swiftycompanion/SearchPage.dart';
+import 'package:swiftycompanion/prefences.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -18,10 +20,9 @@ class Loginpage extends StatefulWidget {
 
 class _LoginpageState extends State<Loginpage> {
   void authenticate(BuildContext context) async {
-    final url =
-        'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-4e07c639697d9451de605a04a8d877090de6a7b32834a0ccd2027acabe652c35&redirect_uri=com.example.swiftycompanion%3A%2F%2Fcallbacktest&response_type=code';
+    final url = dotenv.env['API_URL'] ?? 'invalid URL';
     final callbackUrlScheme = 'com.example.swiftycompanion';
-    final prefs = await SharedPreferences.getInstance();
+    // final prefs = await SharedPreferences.getInstance();
     var arr = [];
     try {
       final result = await FlutterWebAuth.authenticate(
@@ -45,9 +46,11 @@ class _LoginpageState extends State<Loginpage> {
         );
         var a = convert.jsonDecode(res.body);
         var reftoken;
-        await prefs.setString('token', a['access_token']);
-        await prefs.setString('refreshtoken', a['refresh_token']);
-        // await prefs.setString('created_at', a['created_at']);
+        MyPreferences.storeAccessToken(accessToken: a['access_token']);
+        MyPreferences.storeRefreshToken(refreshToken: a['refresh_token']);
+        // await prefs.setString('token', a['access_token']);
+        // await prefs.setString('refreshtoken', a['refresh_token']);
+        // await prefs.setInt('created_at', a['created_at']);
         // print(a);
         context.go('/page2');
       }

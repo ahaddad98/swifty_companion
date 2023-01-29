@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:swiftycompanion/prefences.dart';
 
-class ProviderSetup {
-  static void setup() {
-    Provider.debugCheckInvalidValueType = null;
-    Provider.value(value: CounterProvider());
-    // your providers here
-  }
-}
+class DarkModeProvider extends ChangeNotifier {
+  bool _isDark = false;
 
-class CounterProvider {
-  bool _count = false;
+  bool get isDark => _isDark;
 
-  bool get count => _count;
-
-  void increment() {
-    _count = !_count;
+  bool switchMode() {
+    _isDark = !_isDark;
+    MyPreferences.storeDarkMode(isDarkMode: isDark);
+    notifyListeners();
+    return _isDark;
   }
 
+  void setMode(bool isDark) {
+    _isDark = isDark;
+    MyPreferences.storeDarkMode(isDarkMode: isDark);
+    notifyListeners();
+  }
 }

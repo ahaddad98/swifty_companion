@@ -30,6 +30,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   provider: ^5.0.0
+  flutter_dotenv: ^5.0.2
   flutter:
     sdk: flutter
 
@@ -71,6 +72,7 @@ flutter:
   assets:
     - images/86.png
     - images/42.jpeg
+    - .env
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

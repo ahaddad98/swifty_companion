@@ -4,9 +4,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:swiftycompanion/Graphechart.dart';
 import 'package:swiftycompanion/Percentbar.dart';
 import 'package:swiftycompanion/SearchPage.dart';
+import 'package:swiftycompanion/provider_setup.dart';
 import 'package:swiftycompanion/radar_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' as convert;
@@ -50,7 +52,14 @@ class _DataPageState extends State<DataPage> {
     final prefs = await SharedPreferences.getInstance();
     final String? action = prefs.getString('token');
     final String? refaction = prefs.getString('refreshtoken');
+    // final created_at = prefs.getString('created_at');
     final String login = widget.index;
+    // print(action.toString() +
+    //     "  " +
+    //     refaction.toString() +
+    //     "  " +
+    //     created_at.toString());
+
     try {
       var uritmp = Uri.parse('https://api.intra.42.fr/v2/users/$login');
       http.Response res = await http.get(uritmp, headers: {
@@ -58,7 +67,7 @@ class _DataPageState extends State<DataPage> {
         'Accept': 'application/json',
         'Authorization': 'Bearer $action',
       });
-      print(convert.jsonDecode(res.body));
+      log('===================', error: res.statusCode.toString());
       // widget.leveltoshow =
       //     convert.jsonDecode(res.body)?['cursus_users']?[0]?['level'];
       return convert.jsonDecode(res.body);
@@ -82,6 +91,7 @@ class _DataPageState extends State<DataPage> {
         fontSize: 16,
         fontWeight: FontWeight.w500,
         fontFamily: 'Roboto');
+    final darkModeProvider = Provider.of<DarkModeProvider>(context);
     return FutureBuilder(
       future: databaseFuture,
       builder: (context, snapshot) {
@@ -94,7 +104,7 @@ class _DataPageState extends State<DataPage> {
             return Container(child: Center(child: Text("LOGIN NOT FOUND")));
           }
           var items1 = <String>[];
-          if (snapshot.data['cursus_users'] != null &&
+          if (snapshot.data?['cursus_users'] != null &&
               snapshot.data['cursus_users'].length == 2) {
             items1.add('Piscine');
             items1.add('42');
@@ -151,14 +161,14 @@ class _DataPageState extends State<DataPage> {
               actions: <Widget>[
                 IconButton(
                   onPressed: () {
-                    setState(() {
-                      _iconbool = !_iconbool;
-                    });
-                    print('dark or light mode');
+                    darkModeProvider.switchMode();
                   },
-                  icon: Icon(
-                    _iconbool ? _dark_mode : _light_mode,
-                    color: Colors.grey,
+                  icon: Selector<DarkModeProvider, bool>(
+                    selector: (_, darkmp) => darkmp.isDark,
+                    builder: (_, isDark, __) => Icon(
+                      isDark ? _dark_mode : _light_mode,
+                      color: Colors.grey,
+                    ),
                   ),
                 ),
               ],
@@ -287,22 +297,20 @@ class _DataPageState extends State<DataPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                snapshot.data['projects_users'][index]
-                                        ["project"]["name"]
-                                    .toString(),
-                                style: defaultTextStyle,
-                                // style: TextStyle(
-                                //     fontSize: 14, fontWeight: FontWeight.w600),
+                              Expanded(
+                                child: Text(
+                                  snapshot.data['projects_users'][index]
+                                          ["project"]["name"]
+                                      .toString(),
+                                  style: defaultTextStyle,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                               Text(
                                 snapshot.data['projects_users'][index]
                                         ["final_mark"]
                                     .toString(),
                                 style: defaultTextStyle,
-                                //       style: TextStyle(
-                                //           fontSize: 14,
-                                // fontWeight: FontWeight.w600)
                               ),
                             ],
                           ),
@@ -319,14 +327,12 @@ class _DataPageState extends State<DataPage> {
             ),
           );
         } else if (snapshot.hasError) {
-          print('------------------------------------------------');
           return Column(
             children: [
               Center(child: Text("USER NOT FOUNT GO GOME")),
             ],
           );
         } else if (snapshot.hasData && snapshot.data.lenth == 0) {
-          print('------------------------------------------------');
           return Column(
             children: [
               Center(child: Text("USER NOT FOUNT GO GOME")),

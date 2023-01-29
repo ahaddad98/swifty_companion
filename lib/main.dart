@@ -1,17 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:swiftycompanion/Datapage.dart';
 import 'package:swiftycompanion/Graphechart.dart';
 import 'package:swiftycompanion/LoginPage.dart';
 import 'package:swiftycompanion/SearchPage.dart';
+import 'package:swiftycompanion/prefences.dart';
 import 'package:swiftycompanion/provider_setup.dart';
 import 'package:swiftycompanion/radar_chart.dart';
 
 //com.example.swiftycompanion
-void main() {
-  ProviderSetup.setup();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await MyPreferences.init();
+  final darkMode = await MyPreferences.getDarkMode() ?? false;
+  // final darkMode = true;
+  await dotenv.load(fileName: ".env");
+
   runApp(
-    MyApp(),
+    ChangeNotifierProvider(
+        create: (context) {
+          final darkModeProvider = DarkModeProvider();
+          darkModeProvider.setMode(darkMode);
+          return darkModeProvider;
+        },
+        child: MyApp()),
   );
 }
 
@@ -23,6 +37,7 @@ class MyApp extends StatefulWidget {
 }
 
 var iconbool = false;
+
 class _MyAppState extends State<MyApp> {
   final _router = GoRouter(
     routes: [
@@ -53,10 +68,16 @@ class _MyAppState extends State<MyApp> {
       ),
     ],
   );
+
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-        routeInformationParser: _router.routeInformationParser,
-        routerDelegate: _router.routerDelegate,
-        routeInformationProvider: _router.routeInformationProvider,
+  Widget build(BuildContext context) => Selector<DarkModeProvider, bool>(
+        selector: (ctx, darkModeProvider) => darkModeProvider.isDark,
+        builder: (ctx, isDark, _) => MaterialApp.router(
+          routeInformationParser: _router.routeInformationParser,
+          routerDelegate: _router.routerDelegate,
+          routeInformationProvider: _router.routeInformationProvider,
+          theme: ThemeData(
+              brightness: isDark ? Brightness.dark : Brightness.light),
+        ),
       );
 }
