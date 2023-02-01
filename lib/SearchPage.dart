@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:swiftycompanion/Datapage.dart';
+import 'package:swiftycompanion/LoginPage.dart';
+import 'package:swiftycompanion/prefences.dart';
 import 'package:swiftycompanion/provider_setup.dart';
 
 class SearchPage extends StatefulWidget {
@@ -34,26 +36,25 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
         appBar: AppBar(
           title: new Image.asset(
-            'images/42.jpeg',
+            'images/42.png',
             width: 80.0,
             height: 80.0,
             fit: BoxFit.cover,
           ),
           centerTitle: true,
-          // backgroundColor:
-          //     !_iconbool ? Colors.white : Color.fromARGB(255, 52, 50, 83),
-          // elevation: 0.0,
           leading: IconButton(
-            onPressed: () {
+            onPressed: () async {
+              await MyPreferences.removeAccessToken();
+              await MyPreferences.removeRefreshToken();
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SearchPage(),
+                  builder: (context) => Loginpage(),
                 ),
               );
             },
             icon: Icon(
-              Icons.arrow_back,
+              Icons.logout_rounded,
               color: Colors.grey,
             ),
           ),

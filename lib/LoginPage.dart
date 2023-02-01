@@ -62,7 +62,19 @@ class _LoginpageState extends State<Loginpage> {
   }
 
   @override
+  void initState() {}
+
+  @override
   Widget build(BuildContext context) {
+    // var token = await MyPreferences.getAccessToken();
+    // if (token.toString().length > 0) {
+    //   Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //       builder: (context) => Loginpage(),
+    //     ),
+    //   );
+    // }
     return Scaffold(
       body: Center(
         child: Column(
@@ -73,7 +85,7 @@ class _LoginpageState extends State<Loginpage> {
             ),
             Container(
               child: new Image.asset(
-                'images/42.jpeg',
+                'images/42.png',
                 width: 300.0,
                 height: 300.0,
                 fit: BoxFit.cover,

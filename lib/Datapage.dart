@@ -65,6 +65,7 @@ class _DataPageState extends State<DataPage> {
         'Accept': 'application/json',
         'Authorization': 'Bearer $accesstoken',
       });
+      print('after request');
       // if (res.statusCode == 401) {
       //   http.Response res = await http.post(uritmp, body: {
       //     "grant_type": "refresh_token",
@@ -80,8 +81,8 @@ class _DataPageState extends State<DataPage> {
       return tmp;
       // return {};
     } catch (e) {
-      log('eeeeeeeroruiofaksdhgfkdsjhgfkjdahsg');
-      // return {};
+      print(e);
+      return {};
       // if (res.statusCode == 401) {
       // http.Response res = await http.post(uritmp, body: {
       //   "grant_type": "refresh_token",
@@ -111,14 +112,48 @@ class _DataPageState extends State<DataPage> {
     return FutureBuilder(
       future: databaseFuture,
       builder: (context, snapshot) {
-        // log(snapshot.toString());
-        // if (!snapshot.hasData && snapshot.hasError) {
-        //   return Center(
-        //       child:  Container(child: const Text('User Not Found')));
-        // }
         if (snapshot.hasData) {
           if (snapshot.data.isEmpty) {
-            return Container(child: Center(child: Text("LOGIN NOT FOUND")));
+            return Scaffold(
+                // appBar: AppBar(
+                //   title: new Image.asset(
+                //     'images/42.png',
+                //     width: 80.0,
+                //     height: 80.0,
+                //     fit: BoxFit.cover,
+                //   ),
+                //   centerTitle: true,
+                //   // elevation: 0.0,
+                //   leading: IconButton(
+                //     onPressed: () {
+                //       Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //           builder: (context) => SearchPage(),
+                //         ),
+                //       );
+                //     },
+                //     icon: Icon(
+                //       Icons.arrow_back,
+                //       color: Colors.grey,
+                //     ),
+                //   ),
+                //   actions: <Widget>[
+                //     IconButton(
+                //       onPressed: () {
+                //         darkModeProvider.switchMode();
+                //       },
+                //       icon: Selector<DarkModeProvider, bool>(
+                //         selector: (_, darkmp) => darkmp.isDark,
+                //         builder: (_, isDark, __) => Icon(
+                //           isDark ? _dark_mode : _light_mode,
+                //           color: Colors.grey,
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                body: Center(child: Text("LOGIN NOT FOUND")));
           }
           var items1 = <String>[];
           if (snapshot.data?['cursus_users'] != null &&
@@ -151,18 +186,14 @@ class _DataPageState extends State<DataPage> {
             }
           }
           return Scaffold(
-            // backgroundColor:
-            //     !_iconbool ? Colors.white : Color.fromARGB(255, 52, 50, 83),
             appBar: AppBar(
               title: new Image.asset(
-                'images/42.jpeg',
+                'images/42.png',
                 width: 80.0,
                 height: 80.0,
                 fit: BoxFit.cover,
               ),
               centerTitle: true,
-              // backgroundColor:
-              //     !_iconbool ? Colors.white : Color.fromARGB(255, 52, 50, 83),
               // elevation: 0.0,
               leading: IconButton(
                 onPressed: () {
@@ -194,8 +225,6 @@ class _DataPageState extends State<DataPage> {
               ],
             ),
             body: ListView(
-              // backgroundColor:  !_iconbool ?   Colors.white : Color.fromARGB(255, 52, 50, 83),
-
               padding: const EdgeInsets.symmetric(horizontal: 15),
               children: [
                 Row(
@@ -270,7 +299,6 @@ class _DataPageState extends State<DataPage> {
                 Container(
                   height: 60,
                   width: 100,
-                  // color: !_iconbool ?   Colors.white : Color.fromARGB(255, 52, 50, 83),
                   padding: const EdgeInsets.symmetric(horizontal: 60),
                   child: DropdownButtonFormField(
                     decoration: const InputDecoration(),
