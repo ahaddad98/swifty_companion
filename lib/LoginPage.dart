@@ -36,16 +36,14 @@ class _LoginpageState extends State<Loginpage> {
           uritmp,
           body: {
             'code': code,
-            'client_id':
-                'u-s4t2ud-4e07c639697d9451de605a04a8d877090de6a7b32834a0ccd2027acabe652c35',
-            'client_secret':
-                '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',
+            "client_id": dotenv.env['CLIENT_API'],
+            "client_secret": dotenv.env['SECRET_API'],
             'redirect_uri': 'com.example.swiftycompanion://callbacktest',
             'grant_type': 'authorization_code',
           },
         );
         var a = convert.jsonDecode(res.body);
-        var reftoken;
+        print(a);
         MyPreferences.storeAccessToken(accessToken: a['access_token']);
         MyPreferences.storeRefreshToken(refreshToken: a['refresh_token']);
         // await prefs.setString('token', a['access_token']);

@@ -3,11 +3,13 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:swiftycompanion/Graphechart.dart';
 import 'package:swiftycompanion/Percentbar.dart';
 import 'package:swiftycompanion/SearchPage.dart';
+import 'package:swiftycompanion/prefences.dart';
 import 'package:swiftycompanion/provider_setup.dart';
 import 'package:swiftycompanion/radar_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,10 +38,12 @@ class _DataPageState extends State<DataPage> {
     });
   }
 
-  bool _iconbool = false;
+  // bool _iconbool = false;
   @override
   void initState() {
-    print(" hehehehe ${widget}");
+    final darkModeProvider = DarkModeProvider();
+    // _iconbool = darkModeProvider.isDark;
+    // print(" hehehehe ${widget}");
     // _iconbool = widget.iconbool;
     databaseFuture = getdata();
   }
@@ -49,31 +53,43 @@ class _DataPageState extends State<DataPage> {
 
   // var data;
   Future getdata() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? action = prefs.getString('token');
-    final String? refaction = prefs.getString('refreshtoken');
-    // final created_at = prefs.getString('created_at');
+    final accesstoken = await MyPreferences.getAccessToken();
+    final refreshToken = await MyPreferences.getRefreshToken();
+    print('accesstoken  ==> ' + accesstoken.toString());
+    print('refreshToken ==> ' + refreshToken.toString());
     final String login = widget.index;
-    // print(action.toString() +
-    //     "  " +
-    //     refaction.toString() +
-    //     "  " +
-    //     created_at.toString());
-
+    var uritmp = Uri.parse('https://api.intra.42.fr/v2/users/$login');
     try {
-      var uritmp = Uri.parse('https://api.intra.42.fr/v2/users/$login');
       http.Response res = await http.get(uritmp, headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Bearer $action',
+        'Authorization': 'Bearer $accesstoken',
       });
-      log('===================', error: res.statusCode.toString());
+      // if (res.statusCode == 401) {
+      //   http.Response res = await http.post(uritmp, body: {
+      //     "grant_type": "refresh_token",
+      //     "client_id": dotenv.env['CLIENT_API'],
+      //     "client_secret": dotenv.env['SECRET_API'],
+      //     "refresh_token": refreshToken,
+      //   });
+      //   log(convert.jsonDecode(res.body));
+      // }
       // widget.leveltoshow =
       //     convert.jsonDecode(res.body)?['cursus_users']?[0]?['level'];
-      return convert.jsonDecode(res.body);
+      var tmp = await convert.jsonDecode(res.body);
+      return tmp;
+      // return {};
     } catch (e) {
-      log('eeeeeee', error: e);
-      return {};
+      log('eeeeeeeroruiofaksdhgfkdsjhgfkjdahsg');
+      // return {};
+      // if (res.statusCode == 401) {
+      // http.Response res = await http.post(uritmp, body: {
+      //   "grant_type": "refresh_token",
+      //   "client_id": dotenv.env['CLIENT_API'],
+      //   "client_secret": dotenv.env['SECRET_API'],
+      //   "refresh_token": refreshToken,
+      // });
+      // log(convert.jsonDecode(res.body));
       // var uritmp = Uri.parse('https://api.intra.42.fr/v2/users/$login');
       // http.Response res = await http.get(uritmp, headers: {
       //   'Content-Type': 'application/json',
@@ -87,7 +103,7 @@ class _DataPageState extends State<DataPage> {
   @override
   Widget build(BuildContext context) {
     var defaultTextStyle = TextStyle(
-        color: !_iconbool ? Colors.black : Colors.white,
+        // color: !_iconbool ? Colors.black : Colors.white,
         fontSize: 16,
         fontWeight: FontWeight.w500,
         fontFamily: 'Roboto');
@@ -95,6 +111,7 @@ class _DataPageState extends State<DataPage> {
     return FutureBuilder(
       future: databaseFuture,
       builder: (context, snapshot) {
+        // log(snapshot.toString());
         // if (!snapshot.hasData && snapshot.hasError) {
         //   return Center(
         //       child:  Container(child: const Text('User Not Found')));
@@ -113,8 +130,11 @@ class _DataPageState extends State<DataPage> {
             }
           } else {
             items1.add('Piscine');
-            // if (widget.level == 0 && snapshot.data?['cursus_users'])
-            //   widget.level = snapshot.data?['cursus_users'][0]['level'];
+            if (widget.level == 0 &&
+                snapshot.data?['cursus_users'] != null &&
+                snapshot.data['cursus_users'].length == 1) {
+              widget.level = snapshot.data?['cursus_users'][0]['level'];
+            }
           }
           String dropdownValue = items1.length == 2 ? '42' : 'Piscine';
           List<num> data = [];
@@ -131,8 +151,8 @@ class _DataPageState extends State<DataPage> {
             }
           }
           return Scaffold(
-            backgroundColor:
-                !_iconbool ? Colors.white : Color.fromARGB(255, 52, 50, 83),
+            // backgroundColor:
+            //     !_iconbool ? Colors.white : Color.fromARGB(255, 52, 50, 83),
             appBar: AppBar(
               title: new Image.asset(
                 'images/42.jpeg',
@@ -141,8 +161,8 @@ class _DataPageState extends State<DataPage> {
                 fit: BoxFit.cover,
               ),
               centerTitle: true,
-              backgroundColor:
-                  !_iconbool ? Colors.white : Color.fromARGB(255, 52, 50, 83),
+              // backgroundColor:
+              //     !_iconbool ? Colors.white : Color.fromARGB(255, 52, 50, 83),
               // elevation: 0.0,
               leading: IconButton(
                 onPressed: () {
@@ -329,13 +349,7 @@ class _DataPageState extends State<DataPage> {
         } else if (snapshot.hasError) {
           return Column(
             children: [
-              Center(child: Text("USER NOT FOUNT GO GOME")),
-            ],
-          );
-        } else if (snapshot.hasData && snapshot.data.lenth == 0) {
-          return Column(
-            children: [
-              Center(child: Text("USER NOT FOUNT GO GOME")),
+              Center(child: Text(snapshot.hasError.toString())),
             ],
           );
         }
