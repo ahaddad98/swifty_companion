@@ -61,8 +61,26 @@ class _LoginpageState extends State<Loginpage> {
     }
   }
 
+  var _token;
   @override
-  void initState() {}
+  void initState() {
+    _checkToken();
+  }
+
+  void _checkToken() async {
+    // Assuming you have a method to retrieve the token from storage
+    _token = await MyPreferences.getAccessToken();
+
+    if (_token != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SearchPage(),
+        ),
+      );
+      // Navigator.of(context).pushReplacementNamed('/page2');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,57 +94,59 @@ class _LoginpageState extends State<Loginpage> {
     //   );
     // }
     return Scaffold(
-      body: Center(
-        child: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 80,
-            ),
-            Container(
-              child: new Image.asset(
-                'images/42.png',
-                width: 300.0,
-                height: 300.0,
-                fit: BoxFit.cover,
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            // mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 80,
               ),
-            ),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Stack(
-                children: <Widget>[
-                  Positioned.fill(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: <Color>[
-                            Color(0xFF0D47A1),
-                            Color(0xFF1976D2),
-                            Color(0xFF42A5F5),
-                          ],
+              Container(
+                child: new Image.asset(
+                  'images/42.png',
+                  width: 300.0,
+                  height: 300.0,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Stack(
+                  children: <Widget>[
+                    Positioned.fill(
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: <Color>[
+                              Color(0xFF0D47A1),
+                              Color(0xFF1976D2),
+                              Color(0xFF42A5F5),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 100.0),
-                      textStyle: const TextStyle(fontSize: 18),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 100.0),
+                        textStyle: const TextStyle(fontSize: 18),
+                      ),
+                      onPressed: () {
+                        this.authenticate(context);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SearchPage()));
+                      },
+                      child: const Text('Login'),
                     ),
-                    onPressed: () {
-                      this.authenticate(context);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SearchPage()));
-                    },
-                    child: const Text('Login'),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

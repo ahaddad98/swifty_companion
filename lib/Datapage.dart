@@ -32,7 +32,7 @@ class DataPage extends StatefulWidget {
 
 class _DataPageState extends State<DataPage> {
   Future? databaseFuture;
-  void _incrementCounter(double lev) {
+  void _setLevelToShow(double lev) {
     setState(() {
       widget.leveltoshow = lev;
     });
@@ -46,6 +46,7 @@ class _DataPageState extends State<DataPage> {
     // print(" hehehehe ${widget}");
     // _iconbool = widget.iconbool;
     databaseFuture = getdata();
+    // widget.leveltoshow = databaseFuture['cursus_users'][0]['level'];
   }
 
   var _light_mode = Icons.light_mode;
@@ -59,55 +60,49 @@ class _DataPageState extends State<DataPage> {
     print('refreshToken ==> ' + refreshToken.toString());
     final String login = widget.index;
     var uritmp = Uri.parse('https://api.intra.42.fr/v2/users/$login');
+    http.Response res;
+    var statushttp;
     try {
       http.Response res = await http.get(uritmp, headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer $accesstoken',
       });
-      print('after request');
-      // if (res.statusCode == 401) {
-      //   http.Response res = await http.post(uritmp, body: {
-      //     "grant_type": "refresh_token",
-      //     "client_id": dotenv.env['CLIENT_API'],
-      //     "client_secret": dotenv.env['SECRET_API'],
-      //     "refresh_token": refreshToken,
-      //   });
-      //   log(convert.jsonDecode(res.body));
-      // }
-      // widget.leveltoshow =
-      //     convert.jsonDecode(res.body)?['cursus_users']?[0]?['level'];
+      print('111111111111111111111111111111');
+      statushttp = res.statusCode;
+      print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
+      _setLevelToShow(
+          convert.jsonDecode(res.body)?['cursus_users']?[0]?['level']);
       var tmp = await convert.jsonDecode(res.body);
+      print(tmp);
+      print('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
       return tmp;
       // return {};
     } catch (e) {
-      print(e);
+      print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+      if (statushttp == 401) {
+        res = await http.post(uritmp, body: {
+          "grant_type": "refresh_token",
+          "client_id": dotenv.env['CLIENT_API'],
+          "client_secret": dotenv.env['SECRET_API'],
+          "refresh_token": refreshToken,
+        });
+        http.Response res1 = await http.get(uritmp, headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $accesstoken',
+        });
+        var tmp = await convert.jsonDecode(res1.body);
+        if (tmp) return tmp;
+      }
       return {};
-      // if (res.statusCode == 401) {
-      // http.Response res = await http.post(uritmp, body: {
-      //   "grant_type": "refresh_token",
-      //   "client_id": dotenv.env['CLIENT_API'],
-      //   "client_secret": dotenv.env['SECRET_API'],
-      //   "refresh_token": refreshToken,
-      // });
-      // log(convert.jsonDecode(res.body));
-      // var uritmp = Uri.parse('https://api.intra.42.fr/v2/users/$login');
-      // http.Response res = await http.get(uritmp, headers: {
-      //   'Content-Type': 'application/json',
-      //   'Accept': 'application/json',
-      //   'Authorization': 'Bearer $refaction',
-      // });
-      // return convert.jsonDecode(res.body);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     var defaultTextStyle = TextStyle(
-        // color: !_iconbool ? Colors.black : Colors.white,
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
-        fontFamily: 'Roboto');
+        fontSize: 16, fontWeight: FontWeight.w500, fontFamily: 'Roboto');
     final darkModeProvider = Provider.of<DarkModeProvider>(context);
     return FutureBuilder(
       future: databaseFuture,
@@ -171,7 +166,7 @@ class _DataPageState extends State<DataPage> {
               widget.level = snapshot.data?['cursus_users'][0]['level'];
             }
           }
-          String dropdownValue = items1.length == 2 ? '42' : 'Piscine';
+          String dropdownValue = items1.first;
           List<num> data = [];
           List<String> features = [];
           if (snapshot.data['cursus_users'] != null &&
@@ -240,7 +235,7 @@ class _DataPageState extends State<DataPage> {
                             clipBehavior: Clip.hardEdge,
                             borderRadius: BorderRadius.circular(100.0),
                             child:
-                                Image.network(snapshot.data['image']['link']),
+                                Image.network(snapshot.data?['image']?['link']),
                           ),
                         ],
                       ),
@@ -304,7 +299,7 @@ class _DataPageState extends State<DataPage> {
                     decoration: const InputDecoration(),
                     value: dropdownValue,
                     onChanged: (String? newValue) {
-                      _incrementCounter(newValue == '42'
+                      _setLevelToShow(newValue == '42'
                           ? (snapshot.data['cursus_users'][1]['level'])
                           : (snapshot.data['cursus_users'][0]['level']));
                     },
@@ -332,52 +327,161 @@ class _DataPageState extends State<DataPage> {
                     ),
                   ],
                 ),
-                Container(
-                  height: 300,
-                  child: ListView.builder(
-                    itemCount: snapshot.data['projects_users'].length,
-                    itemBuilder: (context, index) {
-                      if (snapshot.data['projects_users'][index]
-                              ["final_mark"] !=
-                          null) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
+                if (snapshot.data['projects_users'].length <= 0)
+                  Center(child: Text('No projects'))
+                else
+                  Container(
+                    height: snapshot.data['projects_users'].length < 7
+                        ? snapshot.data['projects_users'].length * 40.0
+                        : 250.0,
+                    constraints: BoxConstraints(maxHeight: 250),
+                    child: ListView.builder(
+                      itemCount: snapshot.data['projects_users'].length,
+                      itemBuilder: (context, index) {
+                        if (snapshot.data['projects_users'][index]
+                                ["final_mark"] !=
+                            null) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    snapshot.data['projects_users'][index]
+                                            ["project"]["name"]
+                                        .toString(),
+                                    style: defaultTextStyle,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Text(
                                   snapshot.data['projects_users'][index]
-                                          ["project"]["name"]
+                                          ["final_mark"]
                                       .toString(),
                                   style: defaultTextStyle,
-                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                              Text(
-                                snapshot.data['projects_users'][index]
-                                        ["final_mark"]
-                                    .toString(),
-                                style: defaultTextStyle,
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
+                          );
+                        }
+                        return Container(
+                          height: 0,
+                          // child: Text(''),
                         );
-                      }
-                      return Container(
-                        height: 0,
-                        // child: Text(''),
-                      );
-                    },
+                      },
+                    ),
                   ),
-                )
+                const SizedBox(height: 15),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text("Skills", style: defaultTextStyle),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Container(
+                      height: snapshot.data['cursus_users'].length < 7
+                          ? snapshot.data['cursus_users'].length * 40.0
+                          : 4000.0,
+                      constraints: BoxConstraints(maxHeight: 250),
+                      child: ListView.builder(
+                        itemCount: snapshot.data['cursus_users'].length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  // height: snapshot
+                                  //             .data['cursus_users'][index]
+                                  //                 ['skills']
+                                  //             .length <
+                                  //         7
+                                  //     ? snapshot
+                                  //             .data['cursus_users'][index]
+                                  //                 ['skills']
+                                  //             .length *
+                                  //         40.0
+                                  //     : 250.0,
+                                  constraints: BoxConstraints(maxHeight: 250),
+                                  child: ListView.builder(
+                                    itemCount:
+                                        snapshot.data['cursus_users'].length,
+                                    itemBuilder: (context, index1) {
+                                      return Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                snapshot.data['cursus_users']
+                                                        [index]['skills']
+                                                        [index1]["name"]
+                                                    .toString(),
+                                                style: defaultTextStyle,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                            // Text(
+                                            //   snapshot.data['projects_users'][index]
+                                            //           ["final_mark"]
+                                            //       .toString(),
+                                            //   style: defaultTextStyle,
+                                            // ),
+                                          ],
+                                        ),
+                                      );
+
+                                      return Container(
+                                        height: 0,
+                                        // child: Text(''),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                // Expanded(
+                                //   child: Text(
+                                //     snapshot.data['cursus_users'][index]
+                                //             ['skills'][0]["name"]
+                                //         .toString(),
+                                //     style: defaultTextStyle,
+                                //     overflow: TextOverflow.ellipsis,
+                                //   ),
+                                // ),
+                                // Text(
+                                //   snapshot.data['projects_users'][index]
+                                //           ["final_mark"]
+                                //       .toString(),
+                                //   style: defaultTextStyle,
+                                // ),
+                              ],
+                            ),
+                          );
+
+                          return Container(
+                            height: 0,
+                            // child: Text(''),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           );
         } else if (snapshot.hasError) {
           return Column(
             children: [
-              Center(child: Text(snapshot.hasError.toString())),
+              Center(child: Text(snapshot.error.toString())),
             ],
           );
         }
