@@ -71,15 +71,18 @@ class _DataPageState extends State<DataPage> {
       print('111111111111111111111111111111');
       statushttp = res.statusCode;
       print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
-      _setLevelToShow(
-          convert.jsonDecode(res.body)?['cursus_users']?[0]?['level']);
       var tmp = await convert.jsonDecode(res.body);
+      if (tmp['cursus_users'].length > 0) {
+        _setLevelToShow(
+            convert.jsonDecode(res.body)?['cursus_users']?[0]?['level']);
+      }
       print(tmp);
       print('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
       return tmp;
       // return {};
     } catch (e) {
-      print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+      print(
+          'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' + e.toString());
       if (statushttp == 401) {
         res = await http.post(uritmp, body: {
           "grant_type": "refresh_token",
@@ -382,99 +385,53 @@ class _DataPageState extends State<DataPage> {
                     ),
                   ],
                 ),
-                Column(
-                  children: [
-                    Container(
-                      height: snapshot.data['cursus_users'].length < 7
-                          ? snapshot.data['cursus_users'].length * 40.0
-                          : 4000.0,
-                      constraints: BoxConstraints(maxHeight: 250),
-                      child: ListView.builder(
-                        itemCount: snapshot.data['cursus_users'].length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  // height: snapshot
-                                  //             .data['cursus_users'][index]
-                                  //                 ['skills']
-                                  //             .length <
-                                  //         7
-                                  //     ? snapshot
-                                  //             .data['cursus_users'][index]
-                                  //                 ['skills']
-                                  //             .length *
-                                  //         40.0
-                                  //     : 250.0,
-                                  constraints: BoxConstraints(maxHeight: 250),
-                                  child: ListView.builder(
-                                    itemCount:
-                                        snapshot.data['cursus_users'].length,
-                                    itemBuilder: (context, index1) {
-                                      return Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                snapshot.data['cursus_users']
-                                                        [index]['skills']
-                                                        [index1]["name"]
-                                                    .toString(),
-                                                style: defaultTextStyle,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                            // Text(
-                                            //   snapshot.data['projects_users'][index]
-                                            //           ["final_mark"]
-                                            //       .toString(),
-                                            //   style: defaultTextStyle,
-                                            // ),
-                                          ],
-                                        ),
-                                      );
-
-                                      return Container(
-                                        height: 0,
-                                        // child: Text(''),
-                                      );
-                                    },
+                if (snapshot.data?['cursus_users'].length <= 0)
+                  Center(child: Text('No Skills Found'))
+                else
+                  Column(
+                    children: [
+                      Container(
+                        height: snapshot.data['cursus_users'].last['skills']
+                                    .length <
+                                2
+                            ? snapshot.data['cursus_users'].last['skills']
+                                    .length *
+                                40.0
+                            : 250.0,
+                        constraints: BoxConstraints(maxHeight: 250),
+                        child: ListView.builder(
+                          itemCount: snapshot
+                              .data['cursus_users'].last['skills'].length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      snapshot.data['cursus_users']
+                                          .last['skills'][index]["name"]
+                                          .toString(),
+                                      style: defaultTextStyle,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                ),
-                                // Expanded(
-                                //   child: Text(
-                                //     snapshot.data['cursus_users'][index]
-                                //             ['skills'][0]["name"]
-                                //         .toString(),
-                                //     style: defaultTextStyle,
-                                //     overflow: TextOverflow.ellipsis,
-                                //   ),
-                                // ),
-                                // Text(
-                                //   snapshot.data['projects_users'][index]
-                                //           ["final_mark"]
-                                //       .toString(),
-                                //   style: defaultTextStyle,
-                                // ),
-                              ],
-                            ),
-                          );
-
-                          return Container(
-                            height: 0,
-                            // child: Text(''),
-                          );
-                        },
+                                  Text(
+                                    snapshot.data['cursus_users']
+                                        .last['skills'][index]["level"]
+                                        .toString(),
+                                    style: defaultTextStyle,
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
               ],
             ),
           );
